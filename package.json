@@ -1,7 +1,7 @@
 {
   "name": "react-camera-pro",
   "description": "Universal Camera component for React. Designed with focus on Android, iOS cameras and standard webcams.",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "keywords": [
@@ -15,7 +15,7 @@
     "webRTC"
   ],
   "repository": {
-    "url": "https://github.com/purple-technology/react-camera-pro",
+    "url": "https://github.com/shjacobs303y/react-19-camera-pro",
     "type": "git"
   },
   "homepage": "https://github.com/purple-technology/react-camera-pro#readme",
