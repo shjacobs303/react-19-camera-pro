@@ -10,6 +10,14 @@ import {
 } from './types';
 import { Container, Wrapper, Canvas, Cam, ErrorMsg } from './styles';
 
+const errorMessages = {
+  noCameraAccessible: 'No camera device accessible. Please connect your camera or try a different browser.',
+  permissionDenied: 'Permission denied. Please refresh and give camera permission.',
+  switchCamera:
+    'It is not possible to switch camera to different one because there is only one video device accessible.',
+  canvas: 'Canvas is not supported.',
+};
+
 export const Camera = React.forwardRef<unknown, CameraProps>(
   (
     {
@@ -17,14 +25,9 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
       aspectRatio = 'cover',
       numberOfCamerasCallback = () => null,
       videoSourceDeviceId = undefined,
-      errorMessages = {
-        noCameraAccessible: 'No camera device accessible. Please connect your camera or try a different browser.',
-        permissionDenied: 'Permission denied. Please refresh and give camera permission.',
-        switchCamera:
-          'It is not possible to switch camera to different one because there is only one video device accessible.',
-        canvas: 'Canvas is not supported.',
-      },
+      errorMessages,
       videoReadyCallback = () => null,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       onErrorCallback = () => null,
     },
     ref,
@@ -40,7 +43,6 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
     const [permissionDenied, setPermissionDenied] = useState<boolean>(false);
     const [torchSupported, setTorchSupported] = useState<boolean>(false);
     const [torch, setTorch] = useState<boolean>(false);
-    const { onCameraError, ...rest } = props;
     const mounted = useRef(false);
 
     useEffect(() => {
@@ -55,9 +57,6 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
       numberOfCamerasCallback(numberOfCameras);
     }, [numberOfCameras]);
 
-    const handleError = (error: Error) => {
-      console.error(error);
-
     const switchTorch = async (on = false) => {
       if (stream && navigator?.mediaDevices && !!mounted.current) {
         const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
@@ -67,6 +66,7 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
             await track.applyConstraints({ advanced: [{ torch: on }] } as MediaTrackConstraintSet);
             return true;
           } catch {
+            onErrorCallback('Error: Unable to switch torch.');
             return false;
           }
         }
@@ -164,6 +164,7 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
         setNotSupported,
         setPermissionDenied,
         !!mounted.current,
+        (error) => console.error(error),
       );
     }, [currentFacingMode, videoSourceDeviceId]);
 
@@ -236,7 +237,7 @@ const initCameraStream = async (
   setNotSupported: SetNotSupported,
   setPermissionDenied: SetPermissionDenied,
   isMounted: boolean,
-  onErrorCallback: (error: Error) => void,
+  onErrorCallback: (errorMessage: string) => void,
 ) => {
   // stop any active streams in the window
   if (stream) {
@@ -271,7 +272,7 @@ const initCameraStream = async (
         }
       })
       .catch((err) => {
-        handleError(err, setNotSupported, setPermissionDenied);
+        handleError(err, setNotSupported, setPermissionDenied, onErrorCallback, errorMessages);
       });
   } else {
     const getWebcam =
@@ -289,7 +290,7 @@ const initCameraStream = async (
           }
         },
         (err) => {
-          handleError(err as Error, setNotSupported, setPermissionDenied);
+          handleError(err as Error, setNotSupported, setPermissionDenied, onErrorCallback, errorMessages);
         },
       );
     } else {
@@ -306,13 +307,21 @@ const handleSuccess = (stream: MediaStream, setNumberOfCameras: SetNumberOfCamer
   return stream;
 };
 
-const handleError = (error: Error, setNotSupported: SetNotSupported, setPermissionDenied: SetPermissionDenied) => {
+const handleError = (
+  error: Error,
+  setNotSupported: SetNotSupported,
+  setPermissionDenied: SetPermissionDenied,
+  onErrorCallback: (errorMessage: string) => void,
+  errorMessages: { [key: string]: string },
+) => {
   console.error(error);
 
   //https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
   if (error.name === 'PermissionDeniedError') {
     setPermissionDenied(true);
+    onErrorCallback(errorMessages.permissionDenied);
   } else {
     setNotSupported(true);
+    onErrorCallback(errorMessages.noCameraAccessible);
   }
 };

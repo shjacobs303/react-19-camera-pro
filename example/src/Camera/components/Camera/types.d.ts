@@ -18,6 +18,7 @@ export interface CameraProps {
         canvas?: string;
     };
     videoReadyCallback?(): void;
+    onErrorCallback?: (errorMessage: string) => void;
 }
 export declare type CameraType = React.ForwardRefExoticComponent<CameraProps & React.RefAttributes<unknown>> & {
     takePhoto(type?: 'base64url' | 'imgData'): string | ImageData;
