@@ -25,6 +25,7 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
         canvas: 'Canvas is not supported.',
       },
       videoReadyCallback = () => null,
+      onErrorCallback = () => null,
     },
     ref,
   ) => {
@@ -39,6 +40,7 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
     const [permissionDenied, setPermissionDenied] = useState<boolean>(false);
     const [torchSupported, setTorchSupported] = useState<boolean>(false);
     const [torch, setTorch] = useState<boolean>(false);
+    const { onCameraError, ...rest } = props;
     const mounted = useRef(false);
 
     useEffect(() => {
@@ -52,6 +54,9 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
     useEffect(() => {
       numberOfCamerasCallback(numberOfCameras);
     }, [numberOfCameras]);
+
+    const handleError = (error: Error) => {
+      console.error(error);
 
     const switchTorch = async (on = false) => {
       if (stream && navigator?.mediaDevices && !!mounted.current) {
@@ -231,6 +236,7 @@ const initCameraStream = async (
   setNotSupported: SetNotSupported,
   setPermissionDenied: SetPermissionDenied,
   isMounted: boolean,
+  onErrorCallback: (error: Error) => void,
 ) => {
   // stop any active streams in the window
   if (stream) {
