@@ -1,7 +1,7 @@
 {
   "name": "react-19-camera-pro",
   "description": "My fork of the universal Camera component for React. Designed with focus on Android, iOS cameras and standard webcams.",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "keywords": [
@@ -15,7 +15,7 @@
     "webRTC"
   ],
   "repository": {
-    "url": "https://github.com/shjacobs303/react-19-camera-pro",
+    "url": "git+https://github.com/shjacobs303/react-19-camera-pro.git",
     "type": "git"
   },
   "homepage": "https://github.com/shjacobs303/react-19-camera-pro#readme",
