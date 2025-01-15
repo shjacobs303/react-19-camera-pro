@@ -6,6 +6,7 @@ export type SetNumberOfCameras = React.Dispatch<React.SetStateAction<number>>;
 export type SetNotSupported = React.Dispatch<React.SetStateAction<boolean>>;
 export type SetPermissionDenied = React.Dispatch<React.SetStateAction<boolean>>;
 export interface CameraProps {
+  mirrored?: boolean;
   facingMode?: FacingMode;
   aspectRatio?: AspectRatio;
   numberOfCamerasCallback?(numberOfCameras: number): void;

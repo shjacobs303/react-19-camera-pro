@@ -21,6 +21,7 @@ const errorMessages = {
 export const Camera = React.forwardRef<unknown, CameraProps>(
   (
     {
+      mirrored = false,
       facingMode = 'user',
       aspectRatio = 'cover',
       numberOfCamerasCallback = () => null,
@@ -57,6 +58,18 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
       numberOfCamerasCallback(numberOfCameras);
     }, [numberOfCameras]);
 
+    useEffect(() => {
+      if (permissionDenied && errorMessages.permissionDenied) {
+        onErrorCallback(errorMessages.permissionDenied);
+      }
+    }, [permissionDenied, onErrorCallback, errorMessages]);
+
+    useEffect(() => {
+      if (notSupported && errorMessages.noCameraAccessible) {
+        onErrorCallback(errorMessages.noCameraAccessible);
+      }
+    }, [notSupported, onErrorCallback, errorMessages]);
+
     const switchTorch = async (on = false) => {
       if (stream && navigator?.mediaDevices && !!mounted.current) {
         const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
@@ -76,7 +89,9 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
     };
 
     useEffect(() => {
-      switchTorch(torch);
+      if (torchSupported) {
+        switchTorch(torch);
+      }
     }, [torch]);
 
     useImperativeHandle(ref, () => ({
@@ -169,7 +184,9 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
     }, [currentFacingMode, videoSourceDeviceId]);
 
     useEffect(() => {
-      switchTorch(false).then((success) => setTorchSupported(success));
+      if (torchSupported) {
+        switchTorch(false).then((success) => setTorchSupported(success));
+      }
       if (stream && player && player.current) {
         player.current.srcObject = stream;
       }
@@ -193,7 +210,7 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
             muted={true}
             autoPlay={true}
             playsInline={true}
-            mirrored={currentFacingMode === 'user' ? true : false}
+            mirrored={mirrored}
             onLoadedData={() => {
               videoReadyCallback();
             }}
@@ -295,6 +312,7 @@ const initCameraStream = async (
       );
     } else {
       setNotSupported(true);
+      onErrorCallback(errorMessages.noCameraAccessible);
     }
   }
 };
