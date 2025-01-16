@@ -24,6 +24,7 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
       mirrored = false,
       facingMode = 'user',
       aspectRatio = 'cover',
+      fillHeight = false,
       numberOfCamerasCallback = () => null,
       videoSourceDeviceId = undefined,
       errorMessages,
@@ -213,6 +214,9 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
             mirrored={mirrored}
             onLoadedData={() => {
               videoReadyCallback();
+            }}
+            style={{
+              objectFit: fillHeight ? 'cover' : 'contain',
             }}
           ></Cam>
           <Canvas ref={canvas} />

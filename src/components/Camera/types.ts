@@ -9,6 +9,7 @@ export interface CameraProps {
   mirrored?: boolean;
   facingMode?: FacingMode;
   aspectRatio?: AspectRatio;
+  fillHeight?: boolean;
   numberOfCamerasCallback?(numberOfCameras: number): void;
   videoSourceDeviceId?: string | undefined;
   errorMessages: {

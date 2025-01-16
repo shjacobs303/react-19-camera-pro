@@ -88,22 +88,22 @@ var errorMessages = {
     canvas: 'Canvas is not supported.',
 };
 var Camera = React__default.forwardRef(function (_a, ref) {
-    var _b = _a.mirrored, mirrored = _b === void 0 ? false : _b, _c = _a.facingMode, facingMode = _c === void 0 ? 'user' : _c, _d = _a.aspectRatio, aspectRatio = _d === void 0 ? 'cover' : _d, _e = _a.numberOfCamerasCallback, numberOfCamerasCallback = _e === void 0 ? function () { return null; } : _e, _f = _a.videoSourceDeviceId, videoSourceDeviceId = _f === void 0 ? undefined : _f, errorMessages = _a.errorMessages, _g = _a.videoReadyCallback, videoReadyCallback = _g === void 0 ? function () { return null; } : _g, 
+    var _b = _a.mirrored, mirrored = _b === void 0 ? false : _b, _c = _a.facingMode, facingMode = _c === void 0 ? 'user' : _c, _d = _a.aspectRatio, aspectRatio = _d === void 0 ? 'cover' : _d, _e = _a.fillHeight, fillHeight = _e === void 0 ? false : _e, _f = _a.numberOfCamerasCallback, numberOfCamerasCallback = _f === void 0 ? function () { return null; } : _f, _g = _a.videoSourceDeviceId, videoSourceDeviceId = _g === void 0 ? undefined : _g, errorMessages = _a.errorMessages, _h = _a.videoReadyCallback, videoReadyCallback = _h === void 0 ? function () { return null; } : _h, 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _h = _a.onErrorCallback, 
+    _j = _a.onErrorCallback, 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onErrorCallback = _h === void 0 ? function () { return null; } : _h;
+    onErrorCallback = _j === void 0 ? function () { return null; } : _j;
     var player = React.useRef(null);
     var canvas = React.useRef(null);
     var context = React.useRef(null);
     var container = React.useRef(null);
-    var _j = React.useState(0), numberOfCameras = _j[0], setNumberOfCameras = _j[1];
-    var _k = React.useState(null), stream = _k[0], setStream = _k[1];
-    var _l = React.useState(facingMode), currentFacingMode = _l[0], setFacingMode = _l[1];
-    var _m = React.useState(false), notSupported = _m[0], setNotSupported = _m[1];
-    var _o = React.useState(false), permissionDenied = _o[0], setPermissionDenied = _o[1];
-    var _p = React.useState(false), torchSupported = _p[0], setTorchSupported = _p[1];
-    var _q = React.useState(false), torch = _q[0], setTorch = _q[1];
+    var _k = React.useState(0), numberOfCameras = _k[0], setNumberOfCameras = _k[1];
+    var _l = React.useState(null), stream = _l[0], setStream = _l[1];
+    var _m = React.useState(facingMode), currentFacingMode = _m[0], setFacingMode = _m[1];
+    var _o = React.useState(false), notSupported = _o[0], setNotSupported = _o[1];
+    var _p = React.useState(false), permissionDenied = _p[0], setPermissionDenied = _p[1];
+    var _q = React.useState(false), torchSupported = _q[0], setTorchSupported = _q[1];
+    var _r = React.useState(false), torch = _r[0], setTorch = _r[1];
     var mounted = React.useRef(false);
     React.useEffect(function () {
         mounted.current = true;
@@ -249,6 +249,8 @@ var Camera = React__default.forwardRef(function (_a, ref) {
             permissionDenied ? React__default.createElement(ErrorMsg, null, errorMessages.permissionDenied) : null,
             React__default.createElement(Cam, { ref: player, id: "video", muted: true, autoPlay: true, playsInline: true, mirrored: mirrored, onLoadedData: function () {
                     videoReadyCallback();
+                }, style: {
+                    objectFit: fillHeight ? 'cover' : 'contain',
                 } }),
             React__default.createElement(Canvas, { ref: canvas }))));
 });
