@@ -82,7 +82,7 @@ var errorMessages = {
     canvas: 'Canvas is not supported.',
 };
 var Camera = React.forwardRef(function (_a, ref) {
-    var _b = _a.mirrored, mirrored = _b === void 0 ? false : _b, _c = _a.facingMode, facingMode = _c === void 0 ? 'user' : _c, _d = _a.aspectRatio, aspectRatio = _d === void 0 ? 'cover' : _d, _e = _a.fillHeight, fillHeight = _e === void 0 ? false : _e, _f = _a.numberOfCamerasCallback, numberOfCamerasCallback = _f === void 0 ? function () { return null; } : _f, _g = _a.videoSourceDeviceId, videoSourceDeviceId = _g === void 0 ? undefined : _g, errorMessages = _a.errorMessages, _h = _a.videoReadyCallback, videoReadyCallback = _h === void 0 ? function () { return null; } : _h, 
+    var _b = _a.mirrored, mirrored = _b === void 0 ? false : _b, _c = _a.facingMode, facingMode = _c === void 0 ? 'user' : _c, _d = _a.aspectRatio, aspectRatio = _d === void 0 ? 'cover' : _d, _e = _a.crop, crop = _e === void 0 ? false : _e, _f = _a.numberOfCamerasCallback, numberOfCamerasCallback = _f === void 0 ? function () { return null; } : _f, _g = _a.videoSourceDeviceId, videoSourceDeviceId = _g === void 0 ? undefined : _g, errorMessages = _a.errorMessages, _h = _a.videoReadyCallback, videoReadyCallback = _h === void 0 ? function () { return null; } : _h, 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _j = _a.onErrorCallback, 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -164,17 +164,25 @@ var Camera = React.forwardRef(function (_a, ref) {
                 var canvasHeight = ((_d = container === null || container === void 0 ? void 0 : container.current) === null || _d === void 0 ? void 0 : _d.offsetHeight) || 1280;
                 var canvasAR = canvasWidth / canvasHeight;
                 var sX = void 0, sY = void 0, sW = void 0, sH = void 0, imgData = void 0;
-                if (playerAR > canvasAR) {
-                    sH = playerHeight;
-                    sW = playerHeight * canvasAR;
-                    sX = (playerWidth - sW) / 2;
-                    sY = 0;
+                if (crop) {
+                    if (playerAR > canvasAR) {
+                        sH = playerHeight;
+                        sW = playerHeight * canvasAR;
+                        sX = (playerWidth - sW) / 2;
+                        sY = 0;
+                    }
+                    else {
+                        sW = playerWidth;
+                        sH = playerWidth / canvasAR;
+                        sX = 0;
+                        sY = (playerHeight - sH) / 2;
+                    }
                 }
                 else {
-                    sW = playerWidth;
-                    sH = playerWidth / canvasAR;
                     sX = 0;
-                    sY = (playerHeight - sH) / 2;
+                    sY = 0;
+                    sW = playerWidth;
+                    sH = playerHeight;
                 }
                 canvas.current.width = sW;
                 canvas.current.height = sH;
@@ -243,8 +251,6 @@ var Camera = React.forwardRef(function (_a, ref) {
             permissionDenied ? React.createElement(ErrorMsg, null, errorMessages.permissionDenied) : null,
             React.createElement(Cam, { ref: player, id: "video", muted: true, autoPlay: true, playsInline: true, mirrored: mirrored, onLoadedData: function () {
                     videoReadyCallback();
-                }, style: {
-                    objectFit: fillHeight ? 'cover' : 'contain',
                 } }),
             React.createElement(Canvas, { ref: canvas }))));
 });

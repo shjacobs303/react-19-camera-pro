@@ -24,7 +24,7 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
       mirrored = false,
       facingMode = 'user',
       aspectRatio = 'cover',
-      fillHeight = false,
+      crop = false,
       numberOfCamerasCallback = () => null,
       videoSourceDeviceId = undefined,
       errorMessages,
@@ -112,16 +112,23 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
 
           let sX, sY, sW, sH, imgData;
 
-          if (playerAR > canvasAR) {
-            sH = playerHeight;
-            sW = playerHeight * canvasAR;
-            sX = (playerWidth - sW) / 2;
-            sY = 0;
+          if (crop) {
+            if (playerAR > canvasAR) {
+              sH = playerHeight;
+              sW = playerHeight * canvasAR;
+              sX = (playerWidth - sW) / 2;
+              sY = 0;
+            } else {
+              sW = playerWidth;
+              sH = playerWidth / canvasAR;
+              sX = 0;
+              sY = (playerHeight - sH) / 2;
+            }
           } else {
-            sW = playerWidth;
-            sH = playerWidth / canvasAR;
             sX = 0;
-            sY = (playerHeight - sH) / 2;
+            sY = 0;
+            sW = playerWidth;
+            sH = playerHeight;
           }
 
           canvas.current.width = sW;
@@ -215,11 +222,10 @@ export const Camera = React.forwardRef<unknown, CameraProps>(
             onLoadedData={() => {
               videoReadyCallback();
             }}
-            style={{
-              objectFit: fillHeight ? 'cover' : 'contain',
-            }}
           ></Cam>
-          <Canvas ref={canvas} />
+          <Canvas 
+            ref={canvas} 
+          />
         </Wrapper>
       </Container>
     );
